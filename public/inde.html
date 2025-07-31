@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcrição Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --background-color: #f0f2f5;
+            --card-background: #ffffff;
+            --text-color: #333;
+            --light-text-color: #666;
+            --border-color: #e0e0e0;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --info-color: #17a2b8; /* Cor para a notificação */
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            background-color: var(--card-background);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 700px;
+            margin: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 2.2em;
+        }
+
+        p {
+            color: var(--light-text-color);
+            margin-bottom: 25px;
+            font-size: 1.1em;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+        }
+
+        button:hover:not(:disabled) {
+            background-color: var(--primary-hover-color);
+            transform: translateY(-2px);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 1.15em;
+            color: var(--light-text-color);
+            min-height: 25px;
+        }
+
+        #status.recording {
+            color: var(--error-color);
+            font-weight: 600;
+        }
+
+        #status.processing {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        #status.success {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        #response {
+            margin-top: 40px;
+            text-align: left;
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+            display: none;
+        }
+
+        #response h2 {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+        }
+
+        #response h3 {
+            color: var(--primary-color);
+            font-size: 1.4em;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        pre {
+            background-color: var(--background-color);
+            padding: 20px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--primary-hover-color);
+            text-decoration: underline;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 30px 0;
+        }
+
+        .recording-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background-color: var(--error-color);
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 1.5s infinite ease-out;
+            visibility: hidden;
+        }
+
+        .recording #record-dot {
+            visibility: visible;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: var(--success-color);
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: var(--error-color);
+            border: 1px solid #f5c6cb;
+        }
+
+        /* --- Estilos para o Toast Notification --- */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--info-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(100%);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out, visibility 0.5s;
+            z-index: 1000; /* Garante que fique acima de outros elementos */
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .toast-notification span {
+            font-weight: 600;
+        }
+
+        /* Opcional: Adicionar um ícone */
+        .toast-notification::before {
+            content: '🩸'; /* Exemplo de ícone Unicode */
+            font-size: 1.2em;
+        }
+        /* --- Fim dos estilos do Toast Notification --- */
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Transcrição Inteligente</h1>
+        <p>Grave seu áudio e utilize a inteligência artificial para transcrever e resumir os tópicos principais.</p>
+
+        <div class="buttons-container">
+            <button id="startButton">Iniciar Gravação</button>
+            <button id="stopButton" disabled>Parar Gravação</button>
+        </div>
+
+        <p id="status">
+            <span id="record-dot" class="recording-indicator"></span>
+            Aguardando início da gravação...
+        </p>
+
+        <div id="response">
+            </div>
+    </div>
+
+    <div id="authorToast" class="toast-notification">
+        Desenvolvido por: <span>@vnkthegreat</span>
+    </div>
+
+    <script>
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const statusDiv = document.getElementById('status');
+        const responseDiv = document.getElementById('response');
+        const recordDot = document.getElementById('record-dot');
+        const authorToast = document.getElementById('authorToast'); // Seleciona o toast
+
+        let mediaRecorder;
+        let audioChunks = [];
+
+        function setStatus(message, type = 'default') {
+            statusDiv.textContent = message;
+            statusDiv.className = '';
+            statusDiv.classList.add(type);
+
+            if (type === 'recording') {
+                document.body.classList.add('recording');
+                statusDiv.prepend(recordDot);
+            } else {
+                document.body.classList.remove('recording');
+            }
+        }
+
+        // Função para mostrar o toast
+        function showAuthorToast() {
+            authorToast.classList.add('show');
+            setTimeout(() => {
+                authorToast.classList.remove('show');
+            }, 5000); // O toast desaparece após 5 segundos
+        }
+
+        // Mostra o toast quando a página carrega
+        window.addEventListener('load', showAuthorToast);
+
+        startButton.addEventListener('click', async () => {
+            try {
+                responseDiv.innerHTML = '';
+                responseDiv.style.display = 'none';
+
+                setStatus('Iniciando microfone...', 'processing');
+
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    stream.getTracks().forEach(track => track.stop());
+
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    audioChunks = [];
+
+                    const formData = new FormData();
+                    formData.append('audio', audioBlob, `audio_${Date.now()}.webm`);
+
+                    setStatus('Enviando áudio para processamento...', 'processing');
+
+                    try {
+                        const res = await fetch('/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!res.ok) {
+                            const errorText = await res.text();
+                            throw new Error(`Erro do servidor: ${res.status} - ${errorText}`);
+                        }
+
+                        const htmlResponse = await res.text();
+                        responseDiv.innerHTML = htmlResponse;
+                        responseDiv.style.display = 'block';
+                        setStatus('Processamento concluído com sucesso!', 'success');
+
+                    } catch (error) {
+                        console.error('Erro ao enviar ou processar áudio:', error);
+                        responseDiv.innerHTML = `
+                            <div class="message error">
+                                <p><strong>Ocorreu um erro ao processar o áudio:</strong></p>
+                                <pre>${error.message}</pre>
+                                <p>Por favor, verifique se o Whisper.cpp e a chave da API Gemini estão configurados corretamente no servidor.</p>
+                            </div>
+                        `;
+                        responseDiv.style.display = 'block';
+                        setStatus(`Erro: ${error.message.split('-')[0].trim()}`, 'error');
+
+                    } finally {
+                        startButton.disabled = false;
+                        stopButton.disabled = true;
+                    }
+                };
+
+                mediaRecorder.start();
+                setStatus('Gravando... Clique em "Parar Gravação" para enviar.', 'recording');
+                startButton.disabled = true;
+                stopButton.disabled = false;
+
+            } catch (err) {
+                console.error('Erro ao acessar o microfone:', err);
+                setStatus('Erro: Permissão de microfone negada ou microfone não disponível.', 'error');
+                startButton.disabled = false;
+                stopButton.disabled = true;
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                setStatus('Parando gravação e enviando...', 'processing');
+                startButton.disabled = true;
+                stopButton.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>
