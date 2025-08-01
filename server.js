@@ -15,8 +15,8 @@ const PORT = 3000;
 app.use(express.json());
 
 // --- CONFIGURAÇÕES DO WHISPER.CPP ---
-const WHISPER_CLI = '/data/data/com.termux/files/home/whisper.cpp/build/bin/whisper-cli';
-const WHISPER_MODEL = '/data/data/com.termux/files/home/whisper.cpp/models/ggml-small.bin';
+const WHISPER_CLI = './whisper.cpp/build/bin/whisper-cli';
+const WHISPER_MODEL = './whisper.cpp/models/ggml-small.bin';
 
 // --- CONFIGURAÇÃO DA API GEMINI ---
 const GEMINI_API_KEY = 'AIzaSyBxH0TTFpHMVNA8xSvuBQ6GYUWes4UBSlE'; // << OBTENHA ISSO DO GOOGLE AI STUDIO / GOOGLE CLOUD
