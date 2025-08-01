@@ -9,11 +9,5 @@ cd whisper.cpp
 # Compila o executável do Whisper
 make
 
-# Entra na pasta de modelos
-cd models
-
-# Garante que o script tenha permissão de execução
-chmod +x ./make-ggml.sh
-
-# Baixa e converte o modelo ggml-small.bin
-./make-ggml.sh small
+# Baixa e converte o modelo ggml-small.bin, usando o caminho completo
+./models/make-ggml.sh small
