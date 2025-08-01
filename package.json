@@ -20,22 +20,6 @@
     "fontkit": "^2.0.4",
     "multer": "^2.0.1",
     "nodemailer": "^7.0.3",
-    "pdf-lib": "^1.17.1"
-  },
-{
-  "name": "meloia",
-  "version": "1.0.0",
-  "description": "API em Node.js com o modelo de linguagem Gemini e Whisper.cpp para transcrever áudios.",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-   "preinstall": "git submodule update --init --recursive && bash ./build.sh"
-  },
-  "dependencies": {
-    "axios": "^1.7.2",
-    "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "multer": "^1.4.5-lts.1",
     "pdf-lib": "^1.17.1",
     "node-cron": "^3.0.3"
   }
