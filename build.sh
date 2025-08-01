@@ -5,9 +5,10 @@ echo "Compilando Whisper.cpp..."
 cd whisper.cpp
 
 # Compila o executável do Whisper
-cmake -Bbuild
-make -Cbuild
+make
+
+# Navega para a pasta de modelos
+cd models
 
 # Baixa e converte o modelo ggml-small.bin
-cd models
 ./make-ggml.sh small
