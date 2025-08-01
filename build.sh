@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Clona o repositório do Whisper.cpp
-git clone https://github.com/ggerganov/whisper.cpp
-
+echo "Compilando Whisper.cpp..."
 # Navega para o diretório
 cd whisper.cpp
 
 # Compila o executável do Whisper
-make
+cmake -Bbuild
+make -Cbuild
 
-# Baixa e converte o modelo ggml-small.bin, usando o caminho completo
-./models/make-ggml.sh small
+# Baixa e converte o modelo ggml-small.bin
+cd models
+./make-ggml.sh small
