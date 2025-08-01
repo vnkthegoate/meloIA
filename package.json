@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "preinstall": "git clone https://github.com/ggerganov/whisper.cpp && cd whisper.cpp && make && cd models && ./make-ggml.sh small && cd ../.."
+    "preinstall": "git clone https://github.com/ggerganov/whisper.cpp && cd whisper.cpp && make && ./models/make-ggml.sh small && cd .."
   },
   "keywords": [],
   "author": "",
