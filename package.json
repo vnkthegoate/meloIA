@@ -4,8 +4,8 @@
   "description": "API em Node.js com o modelo de linguagem Gemini e Whisper.cpp para transcrever áudios.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
-      "preinstall": "bash ./build.sh"
+    "start": "node server.js",
+    "preinstall": "bash ./build.sh"
   },
   "keywords": [],
   "author": "",
