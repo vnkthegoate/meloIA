@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
+      "preinstall": "bash ./build.sh"
   },
   "keywords": [],
   "author": "",
